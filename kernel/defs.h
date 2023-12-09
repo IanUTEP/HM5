@@ -24,6 +24,10 @@ void            consputc(int);
 
 // exec.c
 int             exec(char*, char**);
+// semaphore.c
+void		seminit(void);
+int		semalloc(int);
+void		semdealloc(int);
 
 // file.c
 struct file*    filealloc(void);
@@ -107,6 +111,10 @@ int             either_copyin(void *dst, int user_src, uint64 src, uint64 len);
 void            procdump(void);
 int             procinfo(uint64);
 int             freepmem(uint64);
+int 		seminit1(uint64,uint64,uint64);
+int 		semdestroy(uint64);
+int 		semwait(uint64);
+int 		sempost(uint64);
 struct mmr_list* get_mmr_list(int);
 int alloc_mmr_listid(void);
 void dealloc_mmr_listid(int);

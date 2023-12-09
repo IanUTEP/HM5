@@ -114,3 +114,41 @@ sys_freepmem(void)
     return -1;
   return freepmem(p);
 }
+uint64
+sys_sem_init(void)
+{
+  uint64 p;
+  uint64 zztop;
+  uint64 lastlab;
+  if(argaddr(0, &p) < 0)
+    return -1;
+  if(argaddr(1, &zztop) < 0)
+    return -1;
+  if(argaddr(2, &lastlab) < 0)
+    return -1;
+  return seminit1(p,zztop,lastlab);
+}
+uint64
+sys_sem_destroy(void)
+{
+  uint64 p;
+  if(argaddr(0, &p) < 0)
+    return -1;
+  return semdestroy(p);
+}
+uint64
+sys_sem_wait(void)
+{
+  uint64 p;
+  if(argaddr(0, &p) < 0)
+    return -1;
+  return semwait(p);
+}
+uint64
+sys_sem_post(void)
+{
+  uint64 p;
+  if(argaddr(0, &p) < 0)
+    return -1;
+  return sempost(p);
+}

@@ -804,3 +804,50 @@ alloc_mmr_listid() {
   release(&listid_lock);
   return(listid);
 }
+
+int
+seminit1(uint64 addr,uint64 addr1,uint64 addr2)
+{
+  struct proc *thisproc = myproc();
+  int table = -1;
+  table = semalloc(0);
+   if (addr != 0 && copyout(thisproc->pagetable, addr, (char *)&table, sizeof(table)) < 0){
+      return -1;
+  }
+  return 0;
+}
+int
+semdestroy(uint64 addr)
+{
+  int *temp =0; // holds user value
+   either_copyin(temp,1,addr,8); // copy user value passed in
+   acquire(&semtable.sem[*temp].lock); // acquire lock
+   semdealloc(*temp);
+   release(&semtable.sem[*temp].lock);// release lock
+  return 0;
+}
+int
+semwait(uint64 addr)
+{
+  int *temp =0; // holds user value
+   either_copyin(temp,1,addr,8); // copy user value passed in
+    printf("%d \n",temp);
+   acquire(&semtable.sem[*temp].lock); // acquire lock
+   while(semtable.sem[*temp].count == 0){
+   	sleep(&semtable,&semtable.sem[*temp].lock); // wait with lock until free
+   }
+   semtable.sem[*temp].count -= 1; // reduce count because book?
+   release(&semtable.sem[*temp].lock);// release lock
+  return 0;
+}
+int
+sempost(uint64 addr)
+{
+  int *temp =0; // user value
+  either_copyin(temp,1,addr,8); // copyin user value
+   acquire(&semtable.sem[*temp].lock); // get that lock
+   semtable.sem[*temp].count += 1; // increase count 
+   //wakeup(semtable);
+   release(&semtable.sem[*temp].lock); // release lock
+  return 0;
+}
